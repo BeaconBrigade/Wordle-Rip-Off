@@ -13,9 +13,14 @@ with open("fiveLetterWords.txt", "r") as file:
   for line in options :
     newLine = [x for x in line if x.isalpha()]
     options[options.index(line)] = ''.join(newLine)
-
 solution = choice(options)
 
+def exitGame() :
+  """Close down game after checking with user that that is what they want to do"""
+  isQuit = app.yesno("Quit?", "Are you sure you want to quit?")
+  if isQuit :
+    app.destroy()
+    
 def howToPlay() :
   """Provide the user with instructions on how to play"""
   app.info("How to Play", "Guess the Wordle Rip Off in SIX tries. Each guess must be a 5 letter word.\nAfter each guess, the tile colours will change. Green means the letter is correct, and in the right spot. Yellow means the letter is right, but not in the right spot. Dark grey means the letter is wrong.\nClick anywhere and start typing to play.")
@@ -108,6 +113,7 @@ def updateColour(colour) :
   
 # Title and help button box
 titleBox = Box(app, grid = [0,0], width = 400, height = 40, border = True)
+exitButton = PushButton(titleBox, align = "left", command = exitGame, text = "Quit")
 helpButton = PushButton(titleBox, align = "right", command = howToPlay, text = "How to Play")
 addWordButton = PushButton(titleBox, align = "right", command = addWord, text = "Add Word")
 title = Text(titleBox, align = "right", width = "fill", text = "Wordle")
