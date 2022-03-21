@@ -1,5 +1,6 @@
-from guizero import App, Text, PushButton, Box
+from guizero import App, Text, PushButton, Box, Window, TextBox
 from random import choice
+import csv
 
 app = App(title = "Wordle Rip Off", layout = "grid", width = 400, height = 440, bg = "white")
 count = 0
@@ -110,10 +111,46 @@ def updateColour(colour) :
     if colour[i] == "green" or colour[i] == "grey" :
       listOfButtons[i][row].text_color = "white"
       alphabetText[alphabet.index(word[i].upper())].text_color = "white"
+
+def initLoginWindow() :
+  """Open login window"""
+  app.hide()
+  loginWindow.show()
+
+def login() :
+  """Check if the user has valid login"""
+  with open("userCred.csv", "r") as file :
+    possibleCred = dict(filter(None, csv.reader(file)))
+  if (usernameInput.value in possibleCred) and (possibleCred[usernameInput.value] == passwordInput.value) :
+    usernameInput.value = ""
+    passwordInput.value = ""
+    loginWindow.hide()
+    app.show()
+  else :
+    app.warn("Incorrect Username or Password", "Your username or password was incorrect.")
+
+# Login Window
+loginWindow = Window(app, title = "Log In", width = 400, height = 440, bg = "white")
+
+# Title and quit box
+logTitleBox = Box(loginWindow, width = 400, height = 40, border = True)
+logExitButton = PushButton(logTitleBox, align = "left", command = exitGame, text = "Quit")
+logTitle = Text(logTitleBox, align = "right", width = "fill", text = "Log In")
+
+# Log in form
+logFormBox = Box(loginWindow, width = 400, height = 300, layout = "grid")
+usernamePrompt = Text(logFormBox, text = "Username:", grid = [0,0])
+usernameInput = TextBox(logFormBox, grid = [1,0])
+passwordPrompt = Text(logFormBox, text = "Password:", grid = [0,1])
+passwordInput = TextBox(logFormBox, grid = [1,1], hide_text = True)
+submitLog = PushButton(logFormBox, grid = [0,2], command = login, text = "Submit")
+
+#// Game Window \\
   
 # Title and help button box
 titleBox = Box(app, grid = [0,0], width = 400, height = 40, border = True)
 exitButton = PushButton(titleBox, align = "left", command = exitGame, text = "Quit")
+logButton = PushButton(titleBox, align = "left", command = initLoginWindow, text = "Log In")
 helpButton = PushButton(titleBox, align = "right", command = howToPlay, text = "How to Play")
 addWordButton = PushButton(titleBox, align = "right", command = addWord, text = "Add Word")
 title = Text(titleBox, align = "right", width = "fill", text = "Wordle")
@@ -139,3 +176,5 @@ alphabetText = []
 for i in range(26) :
   newText = Text(usedLetter, align = "left", text = alphabet[i], size = 10)
   alphabetText.append(newText)
+
+app.hide()
