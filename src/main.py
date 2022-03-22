@@ -9,7 +9,7 @@ word = ""
 end = False
 
 # create list of words
-with open("fiveLetterWords.txt", "r") as file:
+with open("data/fiveLetterWords.txt", "r") as file:
   options = file.readlines()
   for line in options :
     newLine = [x for x in line if x.isalpha()]
@@ -95,7 +95,7 @@ def updateText(eventData) :
 
 def addWord() :
   newWord = app.question("New Word", "Type new word: ")
-  with open("fiveLetterWords.txt", "a") as file :
+  with open("data/fiveLetterWords.txt", "a") as file :
     if (len(newWord) == 5 and newWord.isalpha()) and (newWord not in options):
       file.write(newWord + '\n')
       app.info("Word Added", f"Your word {newWord} has been successfully added.")
@@ -119,7 +119,7 @@ def initLoginWindow() :
 
 def login() :
   """Check if the user has valid login"""
-  with open("userCred.csv", "r") as file :
+  with open("data/userCred.csv", "r") as file :
     possibleCred = dict(filter(None, csv.reader(file)))
   if (usernameInput.value in possibleCred) and (possibleCred[usernameInput.value] == passwordInput.value) :
     usernameInput.value = ""
@@ -129,12 +129,42 @@ def login() :
   else :
     app.warn("Incorrect Username or Password", "Your username or password was incorrect.")
 
+def goSignUp() :
+  """Open signup window"""
+  loginWindow.hide()
+  signupWindow.show()
+
+def signup() :
+  """Sign the user up"""
+  with open("data/userCred.csv", "r") as file :
+    possibleCred = dict(filter(None, csv.reader(file)))
+  if (newUsernameInput.value in possibleCred) :
+    app.warn("Username already used", "This username is taken")
+  elif (newPasswordInput.value != confirmPasswordInput.value) :
+    app.warn("Passwords don't match", "Your passwords did not match")
+    newPasswordInput.value = ""
+    confirmPasswordInput.value = ""
+  elif (len(newPasswordInput.value) < 4) :
+    app.warn("Password too Short", "Password must be longer than 3 characters")
+    newPasswordInput.value = ""
+    confirmPasswordInput.value = ""
+  else :
+    with open("data/userCred.csv", "a") as file :
+      csvFile = csv.writer(file)
+      csvFile.writerow([newUsernameInput.value, newPasswordInput.value])
+    newUsernameInput.value = ""
+    newPasswordInput.value = ""
+    confirmPasswordInput.value = ""
+    loginWindow.show()
+    signupWindow.hide()   
+  
 # Login Window
 loginWindow = Window(app, title = "Log In", width = 400, height = 440, bg = "white")
 
 # Title and quit box
 logTitleBox = Box(loginWindow, width = 400, height = 40, border = True)
 logExitButton = PushButton(logTitleBox, align = "left", command = exitGame, text = "Quit")
+logSignupButton = PushButton(logTitleBox, align = "left", command = goSignUp, text = "Signup")
 logTitle = Text(logTitleBox, align = "right", width = "fill", text = "Log In")
 
 # Log in form
@@ -144,6 +174,24 @@ usernameInput = TextBox(logFormBox, grid = [1,0])
 passwordPrompt = Text(logFormBox, text = "Password:", grid = [0,1])
 passwordInput = TextBox(logFormBox, grid = [1,1], hide_text = True)
 submitLog = PushButton(logFormBox, grid = [0,2], command = login, text = "Submit")
+
+# // Signup Window \\
+signupWindow = Window(app, title = "Sign Up", height = 440, width = 400, bg = "white")
+
+# Title and quit
+signTitleBox = Box(signupWindow, width = 400, height = 40, border = True)
+signExitButton = PushButton(signTitleBox, align = "left", command = exitGame, text = "Quit")
+signTitle = Text(signTitleBox, align = "right", width = "fill", text = "Signup")
+
+# Sign up form
+signFormBox = Box(signupWindow, width = 400, height = 300, layout = "grid")
+newUsernamePrompt = Text(signFormBox, text = "Username:", grid = [0,0])
+newUsernameInput = TextBox(signFormBox, grid = [1,0])
+newPasswordPrompt = Text(signFormBox, text = "Password:", grid = [0,1])
+newPasswordInput = TextBox(signFormBox, grid = [1,1], hide_text = True)
+confirmPasswordPrompt = Text(signFormBox, text = "Confirm Password:", grid = [0,2])
+confirmPasswordInput = TextBox(signFormBox, grid = [1,2], hide_text = True)
+submitSign = PushButton(signFormBox, grid = [0,3], command = signup, text = "Submit")
 
 #// Game Window \\
   
@@ -177,4 +225,5 @@ for i in range(26) :
   newText = Text(usedLetter, align = "left", text = alphabet[i], size = 10)
   alphabetText.append(newText)
 
+signupWindow.hide()
 app.hide()
