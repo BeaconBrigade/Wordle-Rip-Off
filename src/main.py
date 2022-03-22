@@ -9,7 +9,7 @@ word = ""
 end = False
 
 # create list of words
-with open("fiveLetterWords.txt", "r") as file:
+with open("data/fiveLetterWords.txt", "r") as file:
   options = file.readlines()
   for line in options :
     newLine = [x for x in line if x.isalpha()]
@@ -95,7 +95,7 @@ def updateText(eventData) :
 
 def addWord() :
   newWord = app.question("New Word", "Type new word: ")
-  with open("fiveLetterWords.txt", "a") as file :
+  with open("data/fiveLetterWords.txt", "a") as file :
     if (len(newWord) == 5 and newWord.isalpha()) and (newWord not in options):
       file.write(newWord + '\n')
       app.info("Word Added", f"Your word {newWord} has been successfully added.")
