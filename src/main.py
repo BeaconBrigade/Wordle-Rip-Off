@@ -24,13 +24,6 @@ class ButtonTheme(PushButton) :
     self.text_color = THEMETEXT
     self.bg = THEMEBACKGROUND
 
-class ButtonGroupTheme(ButtonGroup) :
-  """Guizero button group that automatically appends itself to listOfAllText"""
-  def __init__(self, master, options=[], selected=None, horizontal=False, command=None, grid=None, align=None, args=None, visible=True, enabled=None, width=None, height=None) :
-    listOfAllText.append(self)
-    super().__init__(master, options, selected, horizontal, command, grid, align, args, visible, enabled, width, height)
-    self.text_color = THEMETEXT
-
 app = App(title = "Wordle Rip Off", layout = "grid", width = 400, height = 440, bg = THEMEBACKGROUND)
 listOfAllBg.append(app)
 row = 0
@@ -328,7 +321,7 @@ confirmPasswordInput = TextBox(signFormBox, grid = [1,2], hide_text = True)
 
 # favourite game
 favouriteGamePrompt = TextTheme(signFormBox, grid = [0,3], text = "Select favourite video game:")
-favouriteGameChoice = ButtonGroupTheme(signFormBox, grid = [0,4], options = [["Minecraft", "min"], ["Halo", "hal"], ["Sea of Thieves", "sot"], ["Apex Legends", "apx"]])
+favouriteGameChoice = ButtonGroup(signFormBox, grid = [0,4], options = [["Minecraft", "min"], ["Halo", "hal"], ["Sea of Thieves", "sot"], ["Apex Legends", "apx"]])
 
 # main theme
 themePrompt = TextTheme(signFormBox, grid = [0,5], text = "Theme colours:")
