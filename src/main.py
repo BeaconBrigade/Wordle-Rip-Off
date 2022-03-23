@@ -38,7 +38,7 @@ word = ""
 end = False
 
 # create list of words
-with open("data/fiveLetterWords.txt", "r") as file:
+with open("../data/fiveLetterWords.txt", "r") as file:
   options = file.readlines()
   for line in options :
     newLine = [x for x in line if x.isalpha()]
@@ -133,7 +133,7 @@ def updateText(eventData) :
 
 def addWord() :
   newWord = app.question("New Word", "Type new word: ")
-  with open("data/fiveLetterWords.txt", "a") as file :
+  with open("../data/fiveLetterWords.txt", "a") as file :
     if (len(newWord) == 5 and newWord.isalpha()) and (newWord not in options):
       file.write(newWord + '\n')
       app.info("Word Added", f"Your word {newWord} has been successfully added.")
@@ -180,7 +180,7 @@ def restart(logout = True) :
 def login() :
   """Check if the user has valid login"""
   global THEMEBACKGROUND, THEMETEXT
-  with open("data/userCred.csv", "r") as file :
+  with open("../data/userCred.csv", "r") as file :
     userInfo = csv.reader(file)
     possibleCred = {row[0] : [row[1], row[2], row[3], row[4]] for row in userInfo}
   if (usernameInput.value in possibleCred) and (possibleCred[usernameInput.value][0] == passwordInput.value) :
@@ -202,7 +202,7 @@ def initSingupWindow() :
 
 def signup() :
   """Sign the user up"""
-  with open("data/userCred.csv", "r") as file :
+  with open("../data/userCred.csv", "r") as file :
     userInfo = csv.reader(file)
     possibleCred = {row[0] : row[1] for row in userInfo}
   if (newUsernameInput.value in possibleCred) :
@@ -219,7 +219,7 @@ def signup() :
     updateBackground(True, True)
     updateBackground(False, True)
     newUser = User(newUsernameInput.value, newPasswordInput.value, favouriteGameChoice.value, THEMEBACKGROUND, THEMETEXT)
-    with open("data/userCred.csv", "a") as file :
+    with open("../data/userCred.csv", "a") as file :
       csvFile = csv.writer(file)
       csvFile.writerow(newUser.fileString())
     newUsernameInput.value = ""
@@ -392,3 +392,5 @@ for i in range(26) :
 
 signupWindow.hide()
 app.hide()
+
+app.display()
