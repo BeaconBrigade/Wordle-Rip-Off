@@ -1,12 +1,14 @@
 from guizero import App, Text, PushButton, Box, Window, TextBox, ButtonGroup, Slider
-from random import choice
+from random import choice, choices
 from user import User
+from advertOptions import advertOptions
 import csv
 
 THEMEBACKGROUND = "#ffffff"
 THEMETEXT = "#000000"
 listOfAllText = []
 listOfAllBg = []
+currentUser = 0
 
 class TextTheme(Text) :
   """Guizero text that automatically appends itself to the list of text objects upon instantiation"""
@@ -31,7 +33,7 @@ word = ""
 end = False
 
 # create list of words
-with open("../data/fiveLetterWords.txt", "r") as file:
+with open("data/fiveLetterWords.txt", "r") as file:
   options = file.readlines()
   for line in options :
     newLine = [x for x in line if x.isalpha()]
@@ -93,13 +95,18 @@ def updateText(eventData) :
       # is word valid?
       if word not in options :
         return
-      
+
+      trueFalse = [1,0]
+      showAdd = choices(trueFalse, weights = (10, 40), k=1)
+      if showAdd[0] :
+        advert = advertOptions[currentUser.favouriteGame]
+        app.info(advert[0], advert[1])
+    
       isRight = checkWord()
-      if isRight == 1 :
+      if isRight :
         app.info("Win!", f"You guessed the correct word in {row+1} tries!")
-      if row == 5 :
-        if isRight == 0 :
-          app.info("Fail!", f"You failed at guessing the answer {solution.upper()}. :(")
+      elif row == 5 and not isRight:
+        app.info("Fail!", f"You failed at guessing the answer {solution.upper()}. :(")
         end = True
       if row == 5 or isRight == 1 :
         if app.yesno("Play again?", "Would you like to play again?") :
@@ -126,7 +133,7 @@ def updateText(eventData) :
 
 def addWord() :
   newWord = app.question("New Word", "Type new word: ")
-  with open("../data/fiveLetterWords.txt", "a") as file :
+  with open("data/fiveLetterWords.txt", "a") as file :
     if (len(newWord) == 5 and newWord.isalpha()) and (newWord not in options):
       file.write(newWord + '\n')
       app.info("Word Added", f"Your word {newWord} has been successfully added.")
@@ -172,14 +179,14 @@ def restart(logout = True) :
 
 def login() :
   """Check if the user has valid login"""
-  global THEMEBACKGROUND, THEMETEXT
-  with open("../data/userCred.csv", "r") as file :
+  global THEMEBACKGROUND, THEMETEXT, currentUser
+  with open("data/userCred.csv", "r") as file :
     userInfo = csv.reader(file)
     possibleCred = {row[0] : [row[1], row[2], row[3], row[4]] for row in userInfo}
   if (usernameInput.value in possibleCred) and (possibleCred[usernameInput.value][0] == passwordInput.value) :
-    newUser = User(usernameInput.value, possibleCred[usernameInput.value][0], possibleCred[usernameInput.value][1], possibleCred[usernameInput.value][2], possibleCred[usernameInput.value][3])
-    THEMEBACKGROUND = newUser.mainTheme
-    THEMETEXT = newUser.textTheme
+    currentUser = User(usernameInput.value, possibleCred[usernameInput.value][0], possibleCred[usernameInput.value][1], possibleCred[usernameInput.value][2], possibleCred[usernameInput.value][3])
+    THEMEBACKGROUND = currentUser.mainTheme
+    THEMETEXT = currentUser.textTheme
     changeTheme()
     usernameInput.value = ""
     passwordInput.value = ""
@@ -195,7 +202,7 @@ def initSingupWindow() :
 
 def signup() :
   """Sign the user up"""
-  with open("../data/userCred.csv", "r") as file :
+  with open("data/userCred.csv", "r") as file :
     userInfo = csv.reader(file)
     possibleCred = {row[0] : row[1] for row in userInfo}
   if (newUsernameInput.value in possibleCred) :
@@ -212,7 +219,7 @@ def signup() :
     updateBackground(True, True)
     updateBackground(False, True)
     newUser = User(newUsernameInput.value, newPasswordInput.value, favouriteGameChoice.value, THEMEBACKGROUND, THEMETEXT)
-    with open("../data/userCred.csv", "a") as file :
+    with open("data/userCred.csv", "a") as file :
       csvFile = csv.writer(file)
       csvFile.writerow(newUser.fileString())
     newUsernameInput.value = ""
@@ -352,7 +359,7 @@ submitSign = ButtonTheme(signFormBox, grid = [0,13], command = signup, text = "S
 # Title and help button box
 titleBox = Box(app, grid = [0,0], width = 400, height = 40, border = True)
 exitButton = ButtonTheme(titleBox, align = "left", command = exitGame, text = "Quit")
-logButton = ButtonTheme(titleBox, align = "left", command = restart, text = "Log In")
+logButton = ButtonTheme(titleBox, align = "left", command = restart, text = "Log Out")
 helpButton = ButtonTheme(titleBox, align = "right", command = howToPlay, text = "How to Play")
 addWordButton = ButtonTheme(titleBox, align = "right", command = addWord, text = "Add Word")
 title = TextTheme(titleBox, align = "right", width = "fill", text = "Wordle")
