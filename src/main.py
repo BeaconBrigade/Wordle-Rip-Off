@@ -1,4 +1,4 @@
-from guizero import App, Text, PushButton, Box, Window, TextBox, ButtonGroup, Slider
+from guizero import App, Text, PushButton, Box, Window, TextBox, ButtonGroup, Slider, Picture
 from random import choice
 from user import User
 from advertOptions import advertOptions
@@ -42,7 +42,7 @@ with open("data/fiveLetterWords.txt", "r") as file:
 solution = choice(options)
 
 def changeTheme() :
-  """update theme of all elements"""
+  """Update theme of all elements"""
   for i in listOfAllText :
     i.text_color = THEMETEXT
 
@@ -68,7 +68,8 @@ def checkWord() :
     end = True
     updateColour(colours)
     return 1
-  
+
+  # match colour to letter
   for i in range(len(word)) :
     if word[i] == solution[i] :
       colours[i] = "green"
@@ -90,13 +91,14 @@ def updateText(eventData) :
   # Backspace
   if eventData.key == '\b' :
     word = word[:-1]
+  # Enter
   elif eventData.key == '\r' :
-    
     if len(word) == 5 :
       # is word valid?
       if word not in options :
         return
-    
+
+      # check answer
       isRight = checkWord()
       if isRight :
         app.info("Win!", f"You guessed the correct word in {row+1} tries!")
@@ -105,6 +107,7 @@ def updateText(eventData) :
         app.info("Fail!", f"You failed at guessing the answer {solution.upper()}. :(")
         end = True
       if row == 5 or isRight == 1 :
+        # present ad, and play again depending on user input
         advert = advertOptions[currentUser.favouriteGame]
         app.info(advert[0], advert[1])
         if app.yesno("Play again?", "Would you like to play again?") :
@@ -113,8 +116,10 @@ def updateText(eventData) :
         row += 1
         word = ''
       return
+  # word already full
   elif len(word) == 5 :
     return
+  # valid letter
   else :
     if eventData.key.isalpha() : 
       word += eventData.key
@@ -130,13 +135,15 @@ def updateText(eventData) :
   word = word.strip()
 
 def addWord() :
+  """Add word to the data/fiveLetterWords.txt file"""
   newWord = app.question("New Word", "Type new word: ")
   with open("data/fiveLetterWords.txt", "a") as file :
+    # check if word is valid
     if (len(newWord) == 5 and newWord.isalpha()) and (newWord not in options):
       file.write(newWord + '\n')
       app.info("Word Added", f"Your word {newWord} has been successfully added.")
     else :
-      app.warn("Invalid Word", "Word is not alpha, 5 lettered, or is already in the text file.")
+      app.warn("Invalid Word", "Word is not alpha, 5 letters long, or is already in the text file.")
 
 def updateColour(colour) :
   """Change button background to show users progress in getting the word."""
@@ -144,6 +151,8 @@ def updateColour(colour) :
   for i in range(5) :
     listOfButtons[i][row].bg = colour[i]
     alphabetText[alphabet.index(word[i].upper())].bg = colour[i]
+
+    # change text colour to make it more ledgible
     if colour[i] == "green" or colour[i] == "grey" :
       listOfButtons[i][row].text_color = "white"
       alphabetText[alphabet.index(word[i].upper())].text_color = "white"
@@ -154,20 +163,30 @@ def updateColour(colour) :
 def restart(logout = True) :
   """Restart game and/or log out user"""
   global THEMEBACKGROUND, THEMETEXT, end, solution, row, word
+
+  if logout :
+    if not app.yesno("Are you sure?", "Are you sure you want to sign out?") :
+      return
+
+  # clear word display
   end = False
   for i in range(5) :
     for j in range(6) :
       listOfButtons[i][j].bg = THEMEBACKGROUND
       listOfButtons[i][j].text_color = THEMETEXT
       listOfButtons[i][j].text = ""
-      
+
+  # reset alphabet colours
   for i in alphabetText :
     i.bg = THEMEBACKGROUND
     i.text_color = THEMETEXT
 
+  # reset game variables
   row = 0
   word = ""
   solution = choice(options)
+  
+  # head to logout window with blank theme
   if logout :
     app.hide()
     THEMEBACKGROUND = "#ffffff"
@@ -298,7 +317,7 @@ logSignupButton = ButtonTheme(logTitleBox, align = "left", command = initSingupW
 logTitle = TextTheme(logTitleBox, align = "right", width = "fill", text = "Log In")
 
 # Log in form
-logFormBox = Box(loginWindow, width = 400, height = 300, layout = "grid")
+logFormBox = Box(loginWindow, width = 400, height = 150, layout = "grid")
 usernamePrompt = TextTheme(logFormBox, text = "Username:", grid = [0,0])
 usernameInput = TextBox(logFormBox, grid = [1,0])
 usernameInput.text_size = 13;
