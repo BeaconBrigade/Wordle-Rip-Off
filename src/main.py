@@ -34,7 +34,7 @@ word = ""
 end = False
 
 # create list of words
-with open("data/fiveLetterWords.txt", "r") as file:
+with open("resource/fiveLetterWords.txt", "r") as file:
   options = file.readlines()
   for line in options :
     newLine = [x for x in line if x.isalpha()]
@@ -135,9 +135,9 @@ def updateText(eventData) :
   word = word.strip()
 
 def addWord() :
-  """Add word to the data/fiveLetterWords.txt file"""
+  """Add word to the resource/fiveLetterWords.txt file"""
   newWord = app.question("New Word", "Type new word: ")
-  with open("data/fiveLetterWords.txt", "a") as file :
+  with open("resource/fiveLetterWords.txt", "a") as file :
     # check if word is valid
     if (len(newWord) == 5 and newWord.isalpha()) and (newWord not in options):
       file.write(newWord + '\n')
@@ -197,7 +197,7 @@ def restart(logout = True) :
 def login() :
   """Check if the user has valid login"""
   global THEMEBACKGROUND, THEMETEXT, currentUser
-  with open("data/userCred.csv", "r") as file :
+  with open("resource/userCred.csv", "r") as file :
     userInfo = csv.reader(file)
     possibleCred = {row[0] : [row[1], row[2], row[3], row[4]] for row in userInfo}
   if (usernameInput.value in possibleCred) and (possibleCred[usernameInput.value][0] == passwordInput.value) :
@@ -219,7 +219,7 @@ def initSingupWindow() :
 
 def signup() :
   """Sign the user up"""
-  with open("data/userCred.csv", "r") as file :
+  with open("resource/userCred.csv", "r") as file :
     userInfo = csv.reader(file)
     possibleCred = {row[0] : row[1] for row in userInfo}
   if (newUsernameInput.value in possibleCred) :
@@ -236,7 +236,7 @@ def signup() :
     updateBackground(True, True)
     updateBackground(False, True)
     newUser = User(newUsernameInput.value, newPasswordInput.value, favouriteGameChoice.value, THEMEBACKGROUND, THEMETEXT)
-    with open("data/userCred.csv", "a") as file :
+    with open("resource/userCred.csv", "a") as file :
       csvFile = csv.writer(file)
       csvFile.writerow(newUser.fileString())
     newUsernameInput.value = ""
@@ -314,7 +314,7 @@ listOfAllBg.append(loginWindow)
 logTitleBox = Box(loginWindow, width = 400, height = 40, border = True)
 logExitButton = ButtonTheme(logTitleBox, align = "left", command = exitGame, text = "Quit")
 logSignupButton = ButtonTheme(logTitleBox, align = "left", command = initSingupWindow, text = "Signup")
-logTitle = TextTheme(logTitleBox, align = "right", width = "fill", text = "Log In")
+wordleLogo = Picture(logTitleBox, "resource/wordleLogo.png", align = "right")
 
 # Log in form
 logFormBox = Box(loginWindow, width = 400, height = 150, layout = "grid")
@@ -325,6 +325,7 @@ passwordPrompt = TextTheme(logFormBox, text = "Password:", grid = [0,1])
 passwordInput = TextBox(logFormBox, grid = [1,1], hide_text = True)
 passwordInput.text_size = 13;
 submitLog = ButtonTheme(logFormBox, grid = [0,2], command = login, text = "Submit")
+
 
 # // Signup Window \\
 signupWindow = Window(app, title = "Sign Up", height = 540, width = 400, bg = THEMEBACKGROUND)
