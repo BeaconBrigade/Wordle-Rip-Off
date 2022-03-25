@@ -1,5 +1,5 @@
 from guizero import App, Text, PushButton, Box, Window, TextBox, ButtonGroup, Slider
-from random import choice, choices
+from random import choice
 from user import User
 from advertOptions import advertOptions
 import csv
@@ -95,20 +95,17 @@ def updateText(eventData) :
       # is word valid?
       if word not in options :
         return
-
-      trueFalse = [1,0]
-      showAdd = choices(trueFalse, weights = (10, 40), k=1)
-      if showAdd[0] :
-        advert = advertOptions[currentUser.favouriteGame]
-        app.info(advert[0], advert[1])
     
       isRight = checkWord()
       if isRight :
         app.info("Win!", f"You guessed the correct word in {row+1} tries!")
+        end = True
       elif row == 5 and not isRight:
         app.info("Fail!", f"You failed at guessing the answer {solution.upper()}. :(")
         end = True
       if row == 5 or isRight == 1 :
+        advert = advertOptions[currentUser.favouriteGame]
+        app.info(advert[0], advert[1])
         if app.yesno("Play again?", "Would you like to play again?") :
           restart(False)
       else :
