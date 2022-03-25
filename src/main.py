@@ -12,7 +12,7 @@ currentUser = 0
 
 class TextTheme(Text) :
   """Guizero text that automatically appends itself to the list of text objects upon instantiation"""
-  def __init__(self, master, text = "", size=None, color=THEMETEXT, bg=None, font=None, grid=None, align=None, visible=True, enabled=None, width=None, height=None):
+  def __init__(self, master, text = "", size=13, color=THEMETEXT, bg=None, font=None, grid=None, align=None, visible=True, enabled=None, width=None, height=None):
     listOfAllText.append(self)
     super().__init__(master, text, size, color, bg, font, grid, align, visible, enabled, width, height)
     self.text_color = THEMETEXT
@@ -25,8 +25,9 @@ class ButtonTheme(PushButton) :
     super().__init__(master, command, args, text, image, pady, padx, grid, align, icon, visible, enabled, width, height)
     self.text_color = THEMETEXT
     self.bg = THEMEBACKGROUND
+    self.text_size = 13;
 
-app = App(title = "Wordle Rip Off", layout = "grid", width = 400, height = 440, bg = THEMEBACKGROUND)
+app = App(title = "Wordle Rip Off", layout = "grid", width = 400, height = 540, bg = THEMEBACKGROUND)
 listOfAllBg.append(app)
 row = 0
 word = ""
@@ -300,8 +301,10 @@ logTitle = TextTheme(logTitleBox, align = "right", width = "fill", text = "Log I
 logFormBox = Box(loginWindow, width = 400, height = 300, layout = "grid")
 usernamePrompt = TextTheme(logFormBox, text = "Username:", grid = [0,0])
 usernameInput = TextBox(logFormBox, grid = [1,0])
+usernameInput.text_size = 13;
 passwordPrompt = TextTheme(logFormBox, text = "Password:", grid = [0,1])
 passwordInput = TextBox(logFormBox, grid = [1,1], hide_text = True)
+passwordInput.text_size = 13;
 submitLog = ButtonTheme(logFormBox, grid = [0,2], command = login, text = "Submit")
 
 # // Signup Window \\
@@ -318,10 +321,13 @@ signFormBox = Box(signupWindow, width = 400, height = 500, layout = "grid")
 
 newUsernamePrompt = TextTheme(signFormBox, text = "Username:", grid = [0,0])
 newUsernameInput = TextBox(signFormBox, grid = [1,0])
+newUsernameInput.text_size = 13;
 newPasswordPrompt = TextTheme(signFormBox, text = "Password:", grid = [0,1])
 newPasswordInput = TextBox(signFormBox, grid = [1,1], hide_text = True)
+newPasswordInput.text_size = 13;
 confirmPasswordPrompt = TextTheme(signFormBox, text = "Confirm Password:", grid = [0,2])
 confirmPasswordInput = TextBox(signFormBox, grid = [1,2], hide_text = True)
+confirmPasswordInput.text_size = 13;
 
 # favourite game
 favouriteGamePrompt = TextTheme(signFormBox, grid = [0,3], text = "Select favourite video game:")
@@ -359,7 +365,6 @@ exitButton = ButtonTheme(titleBox, align = "left", command = exitGame, text = "Q
 logButton = ButtonTheme(titleBox, align = "left", command = restart, text = "Log Out")
 helpButton = ButtonTheme(titleBox, align = "right", command = howToPlay, text = "How to Play")
 addWordButton = ButtonTheme(titleBox, align = "right", command = addWord, text = "Add Word")
-title = TextTheme(titleBox, align = "right", width = "fill", text = "Wordle")
 
 # Buttons that display letters
 mainBox = Box(app, grid = [0,1], width = 300, height = 310, layout = "grid")
@@ -375,7 +380,7 @@ for i in range(5) :
 # Detect user typing
 app.when_key_pressed = updateText
 
-# When user presses enter, it causes the same effect pressing the submit button
+# When user presses enter, it causes the same effect as pressing the submit button
 loginWindow.when_key_pressed = loginEnter
 signupWindow.when_key_pressed = signupEnter
 
@@ -384,7 +389,7 @@ usedLetter = Box(app, grid = [0,2], width = 400, height = 50)
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 alphabetText = []
 for i in range(26) :
-  newText = TextTheme(usedLetter, align = "left", text = alphabet[i], size = 10)
+  newText = TextTheme(usedLetter, align = "left", text = alphabet[i], size = 12)
   alphabetText.append(newText)
 
 signupWindow.hide()
